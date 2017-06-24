@@ -8,10 +8,11 @@ import grey_harvest
 import requests
 import random
 import sys
-import Networking
+#import Networking
 reload(sys)
 sys.setdefaultencoding('utf-8')
-Proxies = Networking.ReturnProxies(5)
+#Proxies = Networking.ReturnProxies(5)
+Proxies = {}
 LengthOfProxies = 5
 
 
@@ -80,7 +81,7 @@ def CalculatePrice():
 
 def ConvertStoreToDict(store):
 	lis = {}
-	with open('{}/{}.csv'.format(str(FindNewestFolder()), store), 'rb') as f:
+	with open('{}/{}.csv'.format('Data/', store), 'rb') as f:
 		reader = csv.reader(f)
 		your_list = list(reader)
 	for lines in your_list:

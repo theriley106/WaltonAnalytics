@@ -1,19 +1,15 @@
-# We need to import request to access the details of the POST request
-# and render_template, to render our templates (form and response)
-# we'll use url_for to get some URLs for the app on the templates
 from flask import Flask, render_template, request, url_for, redirect, Markup, jsonify, make_response, send_from_directory, session
 import csv
 import bs4
-import PullData
+#import PullData
 import Analytics
 import random
 import requests
 import os
-
 import time
 from operator import itemgetter
 import threading
-proxies = {'https': '108.59.14.203:13010', 'http': '108.59.14.203:13010'}
+
 proxies = {}
 app = Flask(__name__)
 Timeout = 60
@@ -25,7 +21,7 @@ def download_csv(file):
 	return send_from_directory(directory='static', filename=file)
 
 def Status(zip):
-	with open('Economics.csv', 'rb') as f:
+	with open('Data/Economics.csv', 'rb') as f:
 		reader = csv.reader(f)
 		lis = list(reader)
 	for e in lis:
@@ -173,13 +169,6 @@ def SearchItemByLow(username=None, SKU=None, store=None):
 def SearchStore(username=None):
 	return render_template('StoreSearch.html', database=GrabFromSpreadsheet("{}/static/Walmarts.csv".format(os.getcwd())))
 
-#6return redirect("http://www.example.com", code=302)
-
-# Define a route for the action of the form, for example '/hello/'
-# We are also defining which type of requests this route is
-# accepting: POST requests in this case
-
-
 @app.route('/Store/', methods=['POST'])
 def Search(username=None, SKU=None, store=None):
 	#Loading Page
@@ -211,6 +200,8 @@ def StorePage(storenum):
 	print('blah')
 	store = ReturnStoreInfo(str(int(storenum)))
 	return render_template('testing.html', store=store)
+
+
 #################################################################################################3
 
 
