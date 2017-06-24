@@ -1,0 +1,35 @@
+<html>
+
+<head>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+      <div class="navbar-header">
+
+        <a class="navbar-brand" href='index.html'>DollarDrop</a>
+      </div>
+      <p class="navbar-text">
+        {{ store.Name }} - {{ store.Address1 }} {{ store.Address2 }} {{ store.Phone }}
+        </p>
+      <!-- Add the .navbar-btn class to <button> elements not residing
+      in a <form> to vertically center them in the navbar. -->
+      <a class="btn btn-primary navbar-btn" href="#" type="button">Export Inventory as CSV</a>
+      <button class="btn btn-success navbar-btn" type="button">Export Inventory as PDF</button>
+      <button class="btn btn-info navbar-btn" href="{{ url_for('ToHTMLDoc', csvs = store.Number) }}" type="button">View Inventory as HTML</button>
+      <button class="btn btn-warning navbar-btn" type="button">Export Inventory as XLSX</button>
+      <button class="btn btn-danger navbar-btn" type="button">Report Inventory Problem</button>
+      <button class="btn btn-default navbar-btn" type="button">Force Refresh</button>
+
+    </div>
+  </nav>
+</div>
+</html>

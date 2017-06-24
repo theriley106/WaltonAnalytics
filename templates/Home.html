@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Walton Analytics</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+    <style>
+    /*
+ * Start Bootstrap - Business Frontpage (http://startbootstrap.com/)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+
+        body {
+            padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+
+        /* Header Image Background - Change the URL below to your image path (example: ../images/background.jpg) */
+
+        .business-header {
+            height: 200px;
+             opacity: .3; 
+            background: url('{{ url_for('static', filename='background.jpeg') }}') center center no-repeat scroll;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            background-size: cover;
+            -o-background-size: cover;
+        }
+
+        /* Customize the text color and shadow color and to optimize text legibility. */
+
+        .tagline {
+            font-size: 100px;
+            text-shadow: 0 0 10px #000;
+            color: #fff;
+        }
+
+        .img-center {
+            margin: 0 auto;
+        }
+
+        footer {
+            margin: 50px 0;
+        }
+
+
+        </style>
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    {% with CurrentPage="Home" %}
+{% include 'Navigation.html' %}
+{% endwith %}
+
+    <!-- Image Background Page Header -->
+    <!-- Note: The background image is set within the business-casual.css file. -->
+    <header class="business-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <center><h1 class="tagline"><span style='background-color:#727272'; font-color:black;'>Walton Analytics</span></h1></center>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <hr>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>What We Do</h2>
+                <p>At Walton Analytics we record and analyze public inventory information to find retail arbitrage oppurtunities in a users local market.</p>
+                <p>We offer packages to assist in finding local arbitrage oppurtunities.  We also offer archived inventory information for large scale data analytics and inventory tracking.</p>
+                <p>
+                <br>
+                    <a class="btn btn-default btn-lg" href="#">Our Plans &raquo;</a>
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <h2>Contact Us</h2>
+                <address>
+                    <br>
+                <address>
+                    <br>
+                    <abbr title="Email"></abbr> <a href="mailto:#">Admin@WaltonAnalytics.com</a>
+                </address>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <img class="img-circle img-responsive img-center" src="{{ url_for('static', filename='magnify.png') }}" style='height: 300px; width: 300px' alt="">
+                <h2>Inventory Search</h2>
+                <p>Advanced Inventory search with the ability to scan multiple locations and stores.</p>
+            </div>
+            <div class="col-sm-4">
+                <img class="img-circle img-responsive img-center" src="{{ url_for('static', filename='matrix.jpg') }}" style='height: 300px; width: 300px' alt="">
+                <h2>Data Analytics</h2>
+                <p>We have developed advanced inventory searching algorithms with the ability to discover disrepancies in pricing and other uncommonly recorded search parameters.</p>
+            </div>
+            <div class="col-sm-4">
+                <img class="img-circle img-responsive img-center" src="{{ url_for('static', filename='dollar.png') }}" style='height: 300px; width: 300px' alt="">
+                <h2>Store Information</h2>
+                <p>We have access to information from thousands of department stores from around North America, and we provide all resources in an easy to use application.</p>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; 2017 Walton Analytics</p>
+                </div>
+            </div>
+            <!-- /.row -->
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+
+
+<head>
+                  <meta charset="utf-8">
+                  <title>Store Database Search</title>
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+                .col-md-6 {
+                        width: 100% !important;
+                    }
+                #custom-search-input{
+                    padding: 3px;
+                    border: solid 1px #E4E4E4;
+                    border-radius: 6px;
+                    background-color: #fff;
+                }
+
+                #custom-search-input input{
+                    border: 0;
+                    box-shadow: none;
+                }
+
+                #custom-search-input button{
+                    margin: 2px 0 0 0;
+                    background: none;
+                    box-shadow: none;
+                    border: 0;
+                    color: #666666;
+                    padding: 0 8px 0 10px;
+                    border-left: solid 1px #ccc;
+                }
+
+                #custom-search-input button:hover{
+                    border: 0;
+                    box-shadow: none;
+                    border-left: solid 1px #ccc;
+                }
+
+                #custom-search-input .glyphicon-search{
+                    font-size: 23px;
+                }
+
+
+</style>
+
+</head>
+
+{% with CurrentPage="StoreSearch" %}
+{% include 'Navigation.html' %}
+{% endwith %}
+
+
+{% block title %}Walmart Inventory Scanner{% endblock %}
+{% block content %}
+
+
+
+<center>
+<form action="{{url_for('Search')}}" method="post" div class="container">
+<div class="row">
+        <div class="col-md-6">
+            <br><br><br><br>
+            <div id="custom-search-input">
+                <div class="input-group col-md-12">
+                <datalist id="browsers">
+                    {% for store in database %}
+                    <option value="{{ store.number }}">
+                    {% endfor %}
+                  </datalist>
+                    <input type="text" list="browsers" name="yourname" class="form-control input-lg" placeholder="Search North American Walmart Stores" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="submit" value="Submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</center>
+
+<body>
+
+
+<br>
+
+<div class="container">
+    <div class="row">
+        
+        <div class="col-lg-4">
+            <div class="well" style='height: 370px;'>
+                <h2 class="text-info">Economy</h2>
+                <p><span class="label label-info">BUDGET</span></p>
+                <ul>
+                    <li>Search Database of 500 Stores</li>
+                    <li>10 Searches Per Day</li>
+                    <li>Access to Single Item Search</li>
+                </ul>          
+                
+                <hr>
+                <h3>FREE</h3>
+                <h4>(Current Plan)</h4>
+                <hr>
+                <br>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="well" style='height: 370px;'>
+                <h2 class="text-warning">Bronze</h2>
+                <p><span class="label label-success">POPULAR</span></p>
+                <ul>
+                    <li>Search Entire Walmart Database</li>
+                    <li>25 Searches per Day</li>
+                    <li>Access to Walmart Store Database</li>
+                    <li>Access to Single Item Search</li>
+                </ul>          
+                <hr>
+                <h3>$7.99 / month</h3>
+                <hr>
+                <p><a class="btn btn-success btn-large" href="#"><i class="icon-ok"></i> <b>Select plan</b></a></p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="well" style='height: 370px;'>
+                <h2 class="muted">Silver</h2>
+                 <p><span class="label label-warning">POPULAR</span></p>
+                <ul>
+                    <li>Search Entire Walmart Database</li>
+                    <li>Unlimited Daily Searches</li>
+                    <li>Access to Walmart Store Database</li>
+                    <li>Retail Arbitrage Toolkit</li>
+                    <li>Access to API</li>
+                </ul>          
+                <hr>
+                <h3>$24.99 / month</h3>
+                <hr>
+                <p><a class="btn btn-large" href="#" style="background-color: #f0ad4e; color: #FFFFFF"><i class="icon-ok" ></i> <b>Select plan</b></a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<center>
+<div  style="width:80%"><p><b><i><center>To limit bandwidth costs, we must limit the amount of computational time spent per request on our free account tier.  By limiting search duration to 1 Minute we can grab as many Walmart prices as possible in a 1 minute time period.  The amount of data pulled per minute depends on current site traffic.</center></i></b></p></div>
+</center>
+
+</body>
+{% endblock %}

@@ -1,0 +1,167 @@
+
+{% extends {{ url_for('templates', filename='Base.html') }}  %}
+    {% block content %}
+<head>
+                  <title>Walmart Inventory Scanner</title>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+            
+                .col-md-6 {
+                        width: 100% !important;
+                    }
+                #custom-search-input{
+                    padding: 3px;
+                    border: solid 1px #E4E4E4;
+                    border-radius: 6px;
+                    background-color: #fff;
+                }
+
+                #custom-search-input input{
+                    border: 0;
+                    box-shadow: none;
+                }
+
+                #custom-search-input button{
+                    margin: 2px 0 0 0;
+                    background: none;
+                    box-shadow: none;
+                    border: 0;
+                    color: #666666;
+                    padding: 0 8px 0 10px;
+                    border-left: solid 1px #ccc;
+                }
+
+                #custom-search-input button:hover{
+                    border: 0;
+                    box-shadow: none;
+                    border-left: solid 1px #ccc;
+                }
+
+                #custom-search-input .glyphicon-search{
+                    font-size: 23px;
+                }
+
+
+</style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#" style="color:#FFFFFF">Dollar Drop</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+    </body>
+
+<body>
+
+<header>
+<center>
+<form action="{{url_for('hello') }}" method="post" div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Walmart Inventory Checker</h2>
+            <div id="custom-search-input">
+                <div class="input-group col-md-12">
+                    <input type="text" name="yourname" class="form-control input-lg" placeholder="SKIN" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="submit" value="Submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</center>
+<header>
+
+
+<br>
+
+<div class="container">
+    <div class="row">
+        
+        <div class="col-lg-4">
+            <div class="well">
+                <h2 class="text-info">Economy</h2>
+                <p><span class="label label-info">BUDGET</span></p>
+                <ul>
+                    <li>Search Duration of 1 Minute</li>
+                    <li>10 Searches Per Day</li>
+                </ul>          
+                
+                <hr>
+                <h3>FREE</h3>
+                <hr>
+              <p><a class="btn btn-large" href="#"><i class="icon-ok"></i> Select plan</a></p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="well">
+                <h2 class="text-warning">Bronze</h2>
+                <p><span class="label label-success">POPULAR</span></p>
+                <ul>
+                    <li>Search Duration of 5 Minutes</li>
+                    <li>Download results into a CSV</li>
+                    <li>50 Searches Per Day</li>
+                </ul>          
+                <hr>
+                <h3>$7.99 / month</h3>
+                <hr>
+                <p><a class="btn btn-success btn-large" href="#"><i class="icon-ok"></i> Select plan</a></p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="well">
+                <h2 class="muted">Silver</h2>
+                 <p><span class="label label-warning">POPULAR</span></p>
+                <ul>
+                    <li>Unlimited Search Duration</li>
+                    <li>Download Results as a CSV</li>
+                    <li>Unlimited Searches per day</li>
+                    <li>Extra item info available</li>
+                    <li>Access to API</li>
+                </ul>          
+                <hr>
+                <h3>$24.99 / month</h3>
+                <hr>
+                <p><a class="btn btn-large" href="#"><i class="icon-ok"></i> Select plan</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p><b><i><center>To limit bandwidth costs, we must limit the amount of computational time spent per request.  By limiting search duration to 1 Minute we can grab as many Walmart prices as possible in a 1 minute time period.  The amount of data pulled per minute depends on current site traffic.</center></i></b></p>
+
+
+</body>
+{% endblock %}

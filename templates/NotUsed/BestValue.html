@@ -1,0 +1,29 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<title>Best Value</title>
+</head>
+<body>
+<div  style="text-align:center;" class="table-striped">
+<table id="place_for_suggestions" class="table">
+<tr>
+    {% for Store in suggestions %}      
+
+
+              <tr>
+                  <th>{{ Store.Address }}</th>
+                  <th>{{ Store.Price }}</th> 
+                  <th>{{ Store.Quantity }}</th>
+                </tr>
+
+              {% endfor %}
+</tr>
+</table>
+</div>
+</body>
+</html>
