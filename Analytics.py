@@ -16,6 +16,17 @@ Proxies = {}
 LengthOfProxies = 5
 
 
+
+def GrabFromSpreadsheet(spreadsheet):
+		ListOfStores = []
+		with open(spreadsheet, 'r') as f:
+			reader = csv.reader(f)
+			your_list = list(reader)
+		for line in your_list:
+			if 'Walmart Supercenter' in str(line[1]):
+				ListOfStores.append(line[0])
+		return ListOfStores
+
 def GrabElement(json, element):
 		json = json.partition(str(element) + '":')[2]
 		json = json.partition(',')[0]
@@ -473,13 +484,17 @@ def ReturnLowestPrice(sku, accounttype='Limitedd'):
 		print(l)
 	print('\n\n\nTotal Time Elapsed: {} Seconds\n{} Did not work'.format(end - start, len(NoStores)))
 
-if __name__ == "__main__":
-	Database = {}
-	for store in FindCurrentStores():
-		Database[store] = ConvertStoreToDict(store)
 
-	Stores = []
-	for key, value in Database.items():
-		Stores.append(key)
+class pullData(object):
+	#sources = []
+	stores = GrabFromSpreadsheet('static/Walmarts.csv')
+	#Soruces should contain a list of dictionaries containing
+	# yotuube URLS
+	def __init__(self):
+		for store in self.stores:
+			print store
+
+if __name__ == "__main__":
+	print('opened')
 
 	
