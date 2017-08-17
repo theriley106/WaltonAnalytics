@@ -494,6 +494,9 @@ class pullData(object):
 		for store in self.stores:
 			print store
 
+	def rando(self):
+		print ReturnStoreInfo(random.choice(self.stores))
+
 if __name__ == "__main__":
 	print('opened')
 
