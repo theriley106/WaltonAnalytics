@@ -150,13 +150,14 @@ def ReturnStoreQuantity(store, sku):
 def hasNumbers(inputString):
 	return any(char.isdigit() for char in inputString)
 def FindNewestFolder():
-	Dir = max(glob.glob(os.path.join(os.getcwd(), '*/')), key=os.path.getmtime).split('/')[-2]
+	'''Dir = max(glob.glob(os.path.join(os.getcwd(), '*/')), key=os.path.getmtime).split('/')[-2]
 
 
 	if 'static' not in str(Dir):
 		return Dir
 	else:
-		raise Exception('static is being reported as the newest folder...')
+		raise Exception('static is being reported as the newest folder...')'''
+	return "Data"
 
 def FindCurrentStores():
 	Stores = []
@@ -308,6 +309,7 @@ def CurrentOnlinePrice(sku):
 
 
 def ReturnStoreInfo(store):
+	#this is the problem with the FindNewestFolder()
 	Information = {}
 	lis = []
 	with open('{}/{}.csv'.format(str(FindNewestFolder()), store), 'rb') as f:
@@ -494,8 +496,10 @@ class pullData(object):
 		for store in self.stores:
 			print store
 
-	def rando(self):
-		print ReturnStoreInfo(random.choice(self.stores))
+	def rando(self, store=None):
+		if store == None:
+			store = random.choice(self.stores)
+		print ReturnStoreInfo(store)
 
 if __name__ == "__main__":
 	print('opened')
