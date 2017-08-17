@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, Markup, jsonify, make_response, send_from_directory, session
 import csv
+import gpxpy.geo
 import bs4
 #import PullData
 import Analytics
@@ -31,6 +32,15 @@ def Status(zip):
 def MarkupIgnore(markup):
 	markup = str(markup.getText())
 	return markup
+
+def LatLong(address):
+	address = address.replace(" ", "+")
+	response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}'.format(address))
+	resp_json_payload = response.json()
+	return (resp_json_payload['results'][0]['geometry']['location'])
+
+def diffLatLong(lat1, long1, lat2, long2):
+	return gpxpy.geo.haversine_distance(lat1, lon1, lat2, lon2)
 
 def EditGoogleMaps(iframe, width, height):
 	try:
@@ -219,6 +229,7 @@ def add_numbers():
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000, debug=True)
+
 
 
 
