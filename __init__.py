@@ -209,7 +209,10 @@ def ToHTMLDoc(csvs):
 def StorePage(storenum):
 	print('blah')
 	store = ReturnStoreInfo(str(int(storenum)))
-	return render_template('testing.html', store=store)
+	if store != None:
+		return render_template('testing.html', store=store)
+	else:
+		return 'error'
 
 
 #################################################################################################3
