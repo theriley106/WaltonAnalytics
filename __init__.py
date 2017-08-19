@@ -212,8 +212,7 @@ def StorePage(storenum):
 	if store != None:
 		return render_template('testing.html', store=store)
 	else:
-		return 'error'
-
+		return render_template('error.html')
 
 #################################################################################################3
 
