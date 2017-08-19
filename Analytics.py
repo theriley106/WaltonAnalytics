@@ -8,12 +8,11 @@ import grey_harvest
 import requests
 import random
 import sys
-#import Networking
+import Networking
 reload(sys)
 sys.setdefaultencoding('utf-8')
-#Proxies = Networking.ReturnProxies(5)
-Proxies = {}
-LengthOfProxies = 5
+Proxies = Networking.ReturnProxies(30)
+LengthOfProxies = 30
 
 
 
@@ -487,19 +486,6 @@ def ReturnLowestPrice(sku, accounttype='Limitedd'):
 	print('\n\n\nTotal Time Elapsed: {} Seconds\n{} Did not work'.format(end - start, len(NoStores)))
 
 
-class pullData(object):
-	#sources = []
-	stores = GrabFromSpreadsheet('static/Walmarts.csv')
-	#Soruces should contain a list of dictionaries containing
-	# yotuube URLS
-	def __init__(self):
-		for store in self.stores:
-			print store
-
-	def rando(self, store=None):
-		if store == None:
-			store = random.choice(self.stores)
-		print ReturnStoreInfo(store)
 
 if __name__ == "__main__":
 	print('opened')
