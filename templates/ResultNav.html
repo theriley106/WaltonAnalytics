@@ -22,7 +22,7 @@
         </p>
       <!-- Add the .navbar-btn class to <button> elements not residing
       in a <form> to vertically center them in the navbar. -->
-      <a class="btn btn-primary navbar-btn" href="#" type="button">Export Inventory as CSV</a>
+      <a class="btn btn-primary navbar-btn" href="/static/{{ store.Number }}.csv" type="button">Export Inventory as CSV</a>
       <button class="btn btn-success navbar-btn" type="button">Export Inventory as PDF</button>
       <button class="btn btn-info navbar-btn" href="{{ url_for('ToHTMLDoc', csvs = store.Number) }}" type="button">View Inventory as HTML</button>
       <button class="btn btn-warning navbar-btn" type="button">Export Inventory as XLSX</button>
