@@ -13,3 +13,6 @@ class pullData(object):
 		if store == None:
 			store = random.choice(self.stores)
 		print ReturnStoreInfo(store)
+
+	def pullStore(self, storenum):
+		
