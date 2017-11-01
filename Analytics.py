@@ -11,8 +11,13 @@ import sys
 import Networking
 reload(sys)
 sys.setdefaultencoding('utf-8')
-Proxies = Networking.ReturnProxies(30)
-LengthOfProxies = 30
+r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
+Proxies = r["proxies"]
+LengthOfProxies = len(Proxies)
+
+def AutocompleteFromAndroid(string):
+	url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyAMY5NFtMaQD0Mf4RKLBLakwo1Z6jMCxTw&sensor=true&types=geocode&input=29680&radius=null&components=country%3Aus'
+	return url
 
 
 
@@ -311,7 +316,7 @@ def ReturnStoreInfo(store):
 	#this is the problem with the FindNewestFolder()
 	Information = {}
 	lis = []
-	with open('{}/{}.csv'.format(str(FindNewestFolder()), store), 'rb') as f:
+	with open('./{}.csv'.format(store), 'rb') as f:
 		reader = csv.reader(f)
 		your_list = list(reader)
 	for lines in your_list:
@@ -461,6 +466,7 @@ def ReturnLowestPrice(sku, accounttype='Limitedd'):
 						NoStores.append(' ')
 						break
 				res = res.json()
+				print res
 				a["Price"] = int((GrabElement(str(res), 'priceInCents'))) * .01
 				a["Quantity"] = abs(int(float((GrabElement(str(res), 'quantity')))))
 				Lis.append(a)
@@ -483,11 +489,121 @@ def ReturnLowestPrice(sku, accounttype='Limitedd'):
 	end = time.time()
 	for l in Lis:
 		print(l)
-	print('\n\n\nTotal Time Elapsed: {} Seconds\n{} Did not work'.format(end - start, len(NoStores)))
+	print("Total Time Elapsed: {}".format(end - start))
+	#print('\n\n\nTotal Time Elapsed: {} Seconds\n{} Did not work'.format(end - start, len(NoStores)))
+
+def returnStoreItemCount(store, searchterm, dic=None):
+	Quantity = None
+	retry = 0
+	while Quantity == None and retry < 5:
+		try:
+			payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': 0, "query":searchterm,"idx":1}
+			res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(Proxies))
+			a = res.json()['result']['totalCount']
+			Quantity = a
+			if dic != None:
+				dic[searchterm] = Quantity
+			return Quantity
+		except:
+			retry += 1
+	raise Exception("return Item Count Failed...")
+
+
+def wmGrabData(store, searchterm, offset, storeDict=None, threadCount=10):
+	totalPages = genPageVar(offset)
+	def genData(store, searchTerm, listPage, storeDict):
+		for offset in listPage:
+			payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': offset, "query":searchterm,"idx":1}
+			res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(Proxies))
+			if storeDict == None:
+				return res.json()["result"]['results']
+			else:
+				for e in res.json()["result"]['results']:
+					try:
+						rating = e['ratings']['rating']
+						e['ratings'] = rating
+						inventoryStatus = e['inventory']['status']
+						inventoryQuantity = e['inventory']['quantity']
+						e['quantity'] = inventoryQuantity
+						e['inStock'] = inventoryStatus
+						del e['inventory']
+						try:
+							price = float(e['price']['priceInCents']) * .01
+							e['price'] = price
+						except:
+							e['price'] = "UNAVAILABLE"
+						review = e['reviews']['reviewCount']
+						e['reviews'] = review
+						image = e['images']['largeUrl']
+						e['images'] = image
+						del e['location']
+						dept = e['department']['name']
+						e['department'] = dept
+						e['www'] = e['productId']['WWWItemId']
+						e['upc'] = e['productId']['upc']
+						e['pID'] = e['productId']['productId']
+						del e['productId']
+						if e['upc'] not in str(storeDict[store]['results']):
+							storeDict[store]['results'].append(e)
+					except:
+						pass
+	threads = [threading.Thread(target=genData, args=(store, searchterm, listPage, storeDict)) for listPage in chunks(totalPages, len(totalPages)/threadCount)]
+	for thread in threads: thread.start()
+	for thread in threads: thread.join()
+def genPageVar(categorizedInventoryCount):
+	a = []
+	for i in range(0, int(categorizedInventoryCount), 49):
+		a.append(i)
+	return a
+
+def printInventory(store, results):
+	while True:
+		time.sleep(2)
+		try:
+			print len(results[store]['results'])
+		except Exception as exp:
+			print exp
+
+def saveInventory(store, my_dict):
+	while True:
+		time.sleep(15)
+		with open('{}.csv'.format(store), 'wb') as f:  # Just use 'w' mode in 3.x
+			w = csv.DictWriter(f, my_dict[store]['results'][0].keys())
+			w.writeheader()
+			w.writerows(my_dict[store]['results'])
+
+class storeAnalytics(object):
+	def __init__(self, store, searchTerms=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*']):
+		self.store = store
+		self.inventoryCount = 0
+		results = {}
+		threads = [threading.Thread(target=returnStoreItemCount, args=(store, char, results)) for char in searchTerms]
+		for thread in threads: thread.start()
+		for thread in threads: thread.join()
+		self.categorizedInventory = results.copy()
+		for char in searchTerms:
+			self.inventoryCount += results[char]
+		self.inventory = {self.store: {'results': []}}
+
+	#def findAllSKU(self):
+
+	def searchStore(self):
+		threads = [threading.Thread(target=wmGrabData, args=(self.store, searchterm, resultcount, self.inventory)) for searchterm, resultcount in self.categorizedInventory.iteritems()]
+		for thread in threads: thread.start()
+		threading.Thread(target = printInventory, args = (self.store, self.inventory)).start()
+		threading.Thread(target = saveInventory, args = (self.store, self.inventory)).start()
+		for thread in threads: thread.join()
+
 
 
 
 if __name__ == "__main__":
-	print('opened')
+	#ReturnLowestPrice("106607294")
+	#ReturnStoreInfo('5871')
+	a = storeAnalytics('3563')
+	'''for e in wmGrabData("2265", "1", 0):
+		print e["name"]'''
+	a.searchStore()
+	#print('opened')
 
 	

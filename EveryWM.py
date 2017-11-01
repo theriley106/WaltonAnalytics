@@ -11,14 +11,13 @@ import csv
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import threading
-proxies = [{'http': '37.151.43.202:3128', 'https': '37.151.43.202:3128'}, {'http': '139.59.125.53:3128', 'https': '139.59.125.53:3128'}, {'http': '203.74.4.7:80', 'https': '203.74.4.7:80'}, {'http': '190.211.80.154:80', 'https': '190.211.80.154:80'}, {'http': '40.71.43.5:1080', 'https': '40.71.43.5:1080'}, {'http': '163.121.188.3:8080', 'https': '163.121.188.3:8080'}, {'http': '51.254.127.194:8081', 'https': '51.254.127.194:8081'}, {'http': '51.254.132.238:80', 'https': '51.254.132.238:80'}, {'http': '103.253.147.9:8080', 'https': '103.253.147.9:8080'}, {'http': '219.76.4.12:88', 'https': '219.76.4.12:88'}]
+
+r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
+proxies = r["proxies"]
+LengthOfProxies = len(proxies)
 
 ListOfStores = ['2266']
 directory = strftime('%d%b%Y', gmtime())
-
-
-
-
 
 
 if not os.path.exists(directory):
@@ -36,8 +35,6 @@ def GrabFromSpreadsheet(spreadsheet):
 
 GrabFromSpreadsheet("{}/static/Walmarts.csv".format(os.getcwd()))
 
-
-a = raw_input('\n\n\n\n\nThis Application pulls all Walmart Inventory Information Across {} stores nationwide.  Continue? \n\n\n\n\n'.format(len(ListOfStores)))
 
 
 lis = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*']
@@ -58,21 +55,18 @@ def SaveToCSV(store):
 	print(store)
 
 def Fin(searchterm, store):
-	try:
-		payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': 0, "query":searchterm,"idx":1}
-		res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(proxies))
-		Quantity = res.json()['result']['totalCount']
-	except:
-		time.sleep(10)
-		payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': 0, "query":searchterm,"idx":1}
-		res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(proxies))
-		Quantity = res.json()['result']['totalCount']
+	print searchterm, store
+	payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': 0, "query":searchterm,"idx":1}
+	res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(proxies))
+	Quantity = res.json()['result']['totalCount']
+
 	af = 0
 	for i in range(0, int(Quantity), 49):
-		#print('done')
 		prevsku = len(sku)
 		try:
 			payload = {"storeId":store,"searchTerm":searchterm,"size":49,"dept":1000,"newIndex":1, 'offset': i, "query":searchterm,"idx":1}
+			print payload
+			time.sleep(100)
 			res = requests.post('https://www.walmart.com/store/electrode/api/search', data=payload, proxies=random.choice(proxies))
 			for results in res.json()["result"]['results']:
 				e = {}
