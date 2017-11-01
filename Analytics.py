@@ -15,10 +15,18 @@ r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretC
 Proxies = r["proxies"]
 LengthOfProxies = len(Proxies)
 
+def grabStoreFlyers(store):
+	url = 'https://api.flyertown.com/flyerkit/v2.0/publications/walmartusa?access_token=bec50cdf&locale=en-US&store_code={}'.format(store)
+	return url
+
+def returnsLiterallyEverything(store):
+	url = 'https://search.mobile.walmart.com/search?query=%23&store={}&size=50&mode=setStore&offset=50&searchType=entered'
+	return url
+
 def searchDirectlyInApp(key, store):
 	url = 'https://search.mobile.walmart.com/search?query={}&store={}&size=20&mode=setStore&offset=0&searchType=entered'.format(key, store)
 	return url
-	
+
 def grabAllFreePickupToday(store):
 	url = 'https://www.walmart.com/preso/search?prg=mWeb&sort=&page=10&pref_store={}&facet=pickup_and_delivery%3AFREE%20Pickup%20Today'.format(store)
 	return url
