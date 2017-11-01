@@ -15,6 +15,10 @@ r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretC
 Proxies = r["proxies"]
 LengthOfProxies = len(Proxies)
 
+def grabAllFreePickupToday(store):
+	url = 'https://www.walmart.com/preso/search?prg=mWeb&sort=&page=10&pref_store={}&facet=pickup_and_delivery%3AFREE%20Pickup%20Today'.format(store)
+	return url
+
 def getDepartments(store):
 	url = 'https://api.mobile.walmart.com/taxonomy/departments'
 	return url
