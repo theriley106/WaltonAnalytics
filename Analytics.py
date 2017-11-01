@@ -15,11 +15,21 @@ r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretC
 Proxies = r["proxies"]
 LengthOfProxies = len(Proxies)
 
+def getDepartments(store):
+	url = 'https://api.mobile.walmart.com/taxonomy/departments'
+	return url
+
+def searchByUPC(upc, store):
+	url = "http://search.mobile.walmart.com/v1/products-by-code/UPC/{}?storeId={}".format(upc, store)
+	return url
+
 def AutocompleteFromAndroid(string):
 	url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyAMY5NFtMaQD0Mf4RKLBLakwo1Z6jMCxTw&sensor=true&types=geocode&input=29680&radius=null&components=country%3Aus'
 	return url
 
-
+def returnLatLongStores(string):
+	url = 'https://search.mobile.walmart.com/v1/stores/locate?lat=34.7370639&long=-82.2542834&distance=1000&offset=0&count=100'
+	return url
 
 def GrabFromSpreadsheet(spreadsheet):
 		ListOfStores = []
