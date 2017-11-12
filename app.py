@@ -15,7 +15,27 @@ proxies = {}
 app = Flask(__name__)
 Timeout = 60
 
-
+@app.route('/dataviz', methods=['GET', 'POST'])
+def returnStores(database="static/Walmarts.csv"):
+	a = []
+	with open(database) as csvfile:
+		rows = csv.reader(csvfile)
+		res = list(rows)
+	for lines in res:
+		try:
+			information = {}
+			information["Title"] = lines[0]
+			longLat = lines[2]
+			if len(longLat) < 2:
+				raise Exception("No LongLat Found")
+			Long = longLat.partition(',')[0].strip().replace("(", "")
+			Lat = longLat.partition(',')[2].strip().replace(")", "")
+			information["Long"] = Long
+			information["Lat"] = Lat
+			a.append(information)
+		except Exception as exp:
+			pass
+	return render_template("map.html", stores=a)
 
 @app.route('/download/<file>')  
 def download_csv(file):
