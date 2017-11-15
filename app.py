@@ -193,8 +193,12 @@ def SearchItemByLow(username=None, SKU=None, store=None):
 	#Loading Page
 	SKU = request.form['yourname']
 	os.system("python primary.py 30 {} TIMEOUT 10 & ".format(SKU))
+	a = 0
 	while os.path.isfile("{}.json".format(SKU)) == False:
 		time.sleep(1)
+		a = a + 1
+		if a > 20:
+			return render_template('error.html')
 	return redirect(url_for('searchIndex', SKU=SKU))
 	#return render_template('testing.html', store=store)
 
