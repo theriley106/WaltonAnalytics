@@ -192,7 +192,7 @@ def GrabLowPrice(sku):
 def SearchItemByLow(username=None, SKU=None, store=None):
 	#Loading Page
 	SKU = request.form['yourname']
-	os.system("python primary.py 30 {} DEBUG & ".format(SKU))
+	os.system("python primary.py 30 {} TIMEOUT 10 & ".format(SKU))
 	while os.path.isfile("{}.json".format(SKU)) == False:
 		time.sleep(1)
 	return redirect(url_for('searchIndex', SKU=SKU))

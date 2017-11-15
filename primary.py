@@ -13,6 +13,9 @@ if "debug" in str(sys.argv).lower():
 	DEBUG = True
 else:
 	DEBUG = False
+if "timeout" in str(sys.argv).lower():
+	TIMEOUT = sys.argv[sys.argv.index("TIMEOUT") + 1]
+
 THREADS = int(sys.argv[1])
 print(THREADS)
 SKU = sku = sys.argv[2]
