@@ -8,9 +8,12 @@ import random
 import requests
 import os
 import time
+import json
+import subprocess
+import main
 from operator import itemgetter
 import threading
-
+listOfStores = main.GrabAllStoreNumbers()
 proxies = {}
 app = Flask(__name__)
 Timeout = 60
@@ -189,9 +192,35 @@ def GrabLowPrice(sku):
 def SearchItemByLow(username=None, SKU=None, store=None):
 	#Loading Page
 	SKU = request.form['yourname']
-	#store = ReturnStoreInfo(store)
-	return redirect(url_for('ItemPage', storenum=store))
+	os.system("python primary.py 30 {} DEBUG & ".format(SKU))
+	while os.path.isfile("{}.json".format(SKU)) == False:
+		time.sleep(1)
+	return redirect(url_for('searchIndex', SKU=SKU))
 	#return render_template('testing.html', store=store)
+
+#@app.route('/', defaults={'SKU': "106607294"})
+@app.route('/searchbysku/<SKU>', methods=["GET"])
+def searchIndex(SKU):
+	return jsonify(json.loads(str(subprocess.check_output("cat {}.json".format(SKU), shell=True))))
+
+@app.route('/suggestions/<SKU>', defaults={'lowestPrice': 999999999999})
+@app.route('/suggestions/<SKU>/<lowestPrice>')
+def suggestions(lowestPrice, SKU):
+	stores = listOfStores
+	while len(stores) > 0:
+		try:
+			try:
+				print(lowestPrice)
+			except:
+				lowestPrice = 99999999999
+			suggestions_list = random.choice(listOfStores)
+			stores.remove(suggestions_list)
+			data = main.SearchStore(suggestions_list, "106607294")
+			return render_template('suggestions.html', store=suggestions_list, information=data, lowestPrice=lowestPrice)
+		except Exception as exp:
+			print exp
+			pass
+
 
 ##################################################################3
 
