@@ -3,7 +3,11 @@ import threading
 import RandomHeaders
 import csv
 import time
+import random
 lock = threading.Lock()
+
+r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
+Proxies = r["proxies"]
 
 def GrabElement(json, element):
 	json = json.partition(str(element) + '":')[2]
@@ -39,7 +43,7 @@ def SearchStore(store, SKU):
 			}
 
 	url = "https://www.walmart.com/store/ajax/search"
-	res = requests.post(url, data=data, proxies={})
+	res = requests.post(url, data=data, proxies=random.choice(Proxies))
 	res = res.json()
 	try:
 		a["Price"] = int((GrabElement(str(res), 'priceInCents')))

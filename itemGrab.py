@@ -37,6 +37,7 @@ def searchSKU(storeList, sku):
 			try:
 				suggestions_list = random.choice(listOfStores)
 				newData = main.SearchStore(store, sku)
+				print newData
 				newData["Price"]
 				lock.acquire()
 				PRIMARYDICT[store] = {"Price": newData["Price"], "Quantity": newData["Quantity"]}
@@ -61,6 +62,7 @@ def updateDict():
 		while TIMEOUT > 0 and e < 5:
 			e += 1
 			time.sleep(1)
+		print("Finding {}".format(SKU))
 	lock.acquire()
 	with open('{}.json'.format(SKU), 'w') as f:
 		json.dump(PRIMARYDICT, f)
