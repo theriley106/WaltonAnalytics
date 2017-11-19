@@ -4,11 +4,10 @@ import httplib, sys
 import requests
 from Queue import Queue
 import csv
+import sys
 import time
 import random
-STARTTIME = time.time()
-SKU = '123353374'
-concurrent = 165
+CONCURRENT = 165
 r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
 PROXIES = r["proxies"]
 
@@ -46,8 +45,8 @@ def doSomethingWithResult(status, url):
     print status, url
 
 a = GrabAllStoreNumbers()
-q = Queue(concurrent * 2)
-for i in range(concurrent):
+q = Queue(CONCURRENT * 2)
+for i in range(CONCURRENT):
     t = Thread(target=doWork)
     t.daemon = True
     t.start()
@@ -60,3 +59,6 @@ except KeyboardInterrupt:
     sys.exit(1)
 
 print("Completed in {} Seconds".format(time.time() - STARTTIME))
+
+if __name__ == '__main__':
+    SKU = sys.argv[1]

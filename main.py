@@ -35,7 +35,7 @@ def SearchStore(store, SKU):
 			'content-type' : 'application/x-www-form-urlencoded; charset=UTF-8',
 			'origin' : 'https://www.walmart.com',
 			'referer' : 'https://www.walmart.com/store/{}/search?query={}'.format(store, SKU),
-			'user-agent' : str(RandomHeaders.LoadHeader()),
+			'user-agent' : str(RandomHeaders.returnUA()),
 			'x-requested-with': 'XMLHttpRequest',
 			"searchQuery":"store={}&query={}".format(store, SKU),
 

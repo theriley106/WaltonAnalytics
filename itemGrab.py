@@ -19,6 +19,7 @@ if "timeout" in str(sys.argv).lower():
 THREADS = int(sys.argv[1])
 print(THREADS)
 SKU = sys.argv[2]
+sku = sys.argv[2]
 
 if THREADS > 500:
 	sys.exit()
