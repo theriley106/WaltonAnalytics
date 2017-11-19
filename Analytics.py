@@ -71,11 +71,11 @@ def GrabElement(json, element):
 def GrabByZip(sku, zip):
 	url = 'https://www.walmart.com/terra-firma/item/{}/location/{}?selected=true&wl13='.format(sku, zip)
 	res = requests.get(url)
-	return res
-	#OldPrice = (a['payload']['offers'][list(a['payload']['offers'])[0]]['pricesInfo']['priceMap']['WAS']['price'])
-	#CurrentPrice = (a['payload']['offers'][list(a['payload']['offers'])[0]]['pricesInfo']['priceMap']['CURRENT']['price'])
-	#offerid = str(result).partition('Offer Id: ')[2].partition(', ')[0]
-	#return result
+	a = res.json()
+	OldPrice = (a['payload']['offers'][list(a['payload']['offers'])[0]]['pricesInfo']['priceMap']['WAS']['price'])
+	CurrentPrice = (a['payload']['offers'][list(a['payload']['offers'])[0]]['pricesInfo']['priceMap']['CURRENT']['price'])
+	offerid = str(result).partition('Offer Id: ')[2].partition(', ')[0]
+	return result
 
 def CalculatePrice():
 	#Calculates pricing info for all items in newest folder
