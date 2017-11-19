@@ -38,7 +38,6 @@ def searchSKU(storeList, sku):
 			try:
 				suggestions_list = random.choice(listOfStores)
 				newData = main.SearchStore(store, sku)
-				print newData
 				newData["Price"]
 				lock.acquire()
 				PRIMARYDICT[store] = {"Price": newData["Price"], "Quantity": newData["Quantity"]}
@@ -77,9 +76,14 @@ threading.Thread(target=updateDict).start()
 
 threads = [threading.Thread(target=searchSKU, args=(stores, sku)) for stores in partListOfStores]
 for thread in threads:
+	thread.daemon = True
 	thread.start()
-for thread in threads:
-	thread.join()
+
+while threading.active_count() > 0:
+	try:
+		print "Thread Running"
+		time.sleep(10)
+	except:
+		raise Exception("Ending threads...")
 TIMEOUT = 0
-time.sleep(1.5)
 print("Completed in {} Seconds".format(time.time() - STARTTIME))

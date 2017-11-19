@@ -45,6 +45,7 @@ def SearchStore(store, SKU):
 	url = "https://www.walmart.com/store/ajax/search"
 	res = requests.post(url, data=data, proxies=random.choice(Proxies))
 	res = res.json()
+	print res
 	try:
 		a["Price"] = int((GrabElement(str(res), 'priceInCents')))
 	except: 
