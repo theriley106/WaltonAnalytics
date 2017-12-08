@@ -1,6 +1,5 @@
 import os
 import requests
-import main
 import random
 import threading
 import json
@@ -11,7 +10,7 @@ lock = threading.Lock()
 STARTTIME = time.time()
 TIMEOUT = 10
 Proxies = [{}]
-THREADS = 20
+THREADS = 30
 PRIMARYDICT = []
 
 def GrabAllStoreNumbers():
@@ -82,7 +81,7 @@ def searchSKU(storeList, sku):
 				newData["Price"]
 				lock.acquire()
 				print {"Store": store, "Price": newData["Price"], "Quantity": newData["Quantity"]}
-				PRIMARYDICT.append({"SKU": sku, "Store": store, "Price": newData["Price"], "Quantity": newData["Quantity"]})
+				PRIMARYDICT.append({"SKU": sku, "Store": store, "Price": int(newData["Price"]), "Quantity": newData["Quantity"]})
 				lock.release()
 			except Exception as exp:
 				pass
@@ -109,8 +108,11 @@ for thread in threads:
 	thread.start()
 for thread in threads:
 	thread.join()
-PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price']) 
-print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}".format('${:,.2f}'.format(PRIMARYDICT[0]["Store"], int(PRIMARYDICT[0]["Price"]) * .01, abs(int(PRIMARYDICT[0]["Quantity"])))))
-saveToCSV(PRIMARYDICT)
-print("Saved Information to {}.csv".format(PRIMARYDICT[0]['SKU']))	
-print("Scan Completed in {} Seconds".format(time.time() - STARTTIME))
+if len(PRIMARYDICT) > 3:
+	PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price']) 
+	print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}\n\n\n".format(PRIMARYDICT[0]["Store"], '${:,.2f}'.format(int(PRIMARYDICT[0]["Price"]) * .01), abs(int(PRIMARYDICT[0]["Quantity"]))))
+	saveToCSV(PRIMARYDICT)
+	print("Saved Inventory Information to {}.csv\n".format(PRIMARYDICT[0]['SKU']))	
+	print("Scan Completed in {} Seconds".format(time.time() - STARTTIME))
+else:
+	print("Item Stock Too Low")
