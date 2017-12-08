@@ -4,29 +4,70 @@ import main
 import random
 import threading
 import json
+import csv
 import sys
 import time
 lock = threading.Lock()
 STARTTIME = time.time()
 TIMEOUT = 10
-if "debug" in str(sys.argv).lower():
-	DEBUG = True
-else:
-	DEBUG = False
-if "timeout" in str(sys.argv).lower():
-	TIMEOUT = sys.argv[sys.argv.index("TIMEOUT") + 1]
+Proxies = [{}]
+THREADS = 20
+PRIMARYDICT = []
 
-THREADS = int(sys.argv[1])
-print(THREADS)
-SKU = sys.argv[2]
-sku = sys.argv[2]
+def GrabAllStoreNumbers():
+	ListOfStores = []
+	with open('Walmarts.csv', 'r') as f:
+		reader = csv.reader(f)
+		your_list = list(reader)
+	for line in your_list:
+		if 'Walmart Supercenter' in str(line[1]):
+			ListOfStores.append(line[0])
+	return ListOfStores
 
-if THREADS > 500:
-	sys.exit()
+def GrabElement(json, element):
+	json = json.partition(str(element) + '":')[2]
+	json = json.partition(',')[0]
+	if '"' in str(json):
+		json = json.replace('"', '')
+	if '{' in str(json):
+		json = json.replace('{', '')
+	if '}' in str(json):
+		json = json.replace('}', '')
+	return json
 
-listOfStores = main.GrabAllStoreNumbers()
+def SearchStore(store, SKU):
+	a = {}
+	a['Store'] = str(store)
+	data = {
+			'authority': 'www.walmart.com',
+			'method': 'POST',
+			'path': '/store/ajax/search',
+			'scheme': 'https',
+			'accept' : 'application/json, text/javascript, */*; q=0.01',
+			'accept-encoding' : 'gzip, deflate, br',
+			'accept-language' : 'en-US,en;q=0.8',
+			'content-length' : '55',
+			'content-type' : 'application/x-www-form-urlencoded; charset=UTF-8',
+			'origin' : 'https://www.walmart.com',
+			'referer' : 'https://www.walmart.com/store/{}/search?query={}'.format(store, SKU),
+			'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
+			'x-requested-with': 'XMLHttpRequest',
+			"searchQuery":"store={}&query={}".format(store, SKU),
 
-PRIMARYDICT = {}
+
+			}
+
+	url = "https://www.walmart.com/store/ajax/search"
+	res = requests.post(url, data=data, proxies=random.choice(Proxies))
+	res = res.json()
+	try:
+		a["Price"] = int((GrabElement(str(res), 'priceInCents')))
+	except: 
+		pass
+
+	a["Quantity"] = (GrabElement(str(res), 'quantity'))
+	return a
+
 
 def chunks(l, n):
 	for i in xrange(0, len(l), n):
@@ -37,53 +78,39 @@ def searchSKU(storeList, sku):
 		if (time.time() - STARTTIME) < (60*TIMEOUT):
 			try:
 				suggestions_list = random.choice(listOfStores)
-				newData = main.SearchStore(store, sku)
+				newData = SearchStore(store, sku)
 				newData["Price"]
 				lock.acquire()
-				PRIMARYDICT[store] = {"Price": newData["Price"], "Quantity": newData["Quantity"]}
+				print {"Store": store, "Price": newData["Price"], "Quantity": newData["Quantity"]}
+				PRIMARYDICT.append({"SKU": sku, "Store": store, "Price": newData["Price"], "Quantity": newData["Quantity"]})
 				lock.release()
-				
-
 			except Exception as exp:
-				if DEBUG == True:
-					print exp
 				pass
 		else:
 			return
 
+def saveToCSV(listVar):
+	with open("{}.csv".format(listVar[0]["SKU"]), "w") as fp:
+		wr = csv.writer(fp, dialect='excel')
+		list1 = ["Store", "Price", "Quantity"]
+		wr.writerow(list1)
+		wr.writerow([""])
+		for listItem in listVar:
+			list1 = [listItem["Store"], '${:,.2f}'.format(int(listItem["Price"]) * .01), listItem["Quantity"]]
+			wr.writerow(list1)
 
-def updateDict():
-	while (time.time() - STARTTIME) < (60*TIMEOUT):
-		lock.acquire()
-		with open('{}.json'.format(SKU), 'w') as f:
-			json.dump(PRIMARYDICT, f)
-		lock.release()
-		e = 0
-		while TIMEOUT > 0 and e < 5:
-			e += 1
-			time.sleep(1)
-		print("Finding {}".format(SKU))
-	lock.acquire()
-	with open('{}.json'.format(SKU), 'w') as f:
-		json.dump(PRIMARYDICT, f)
-	lock.release()
-	return
+listOfStores = GrabAllStoreNumbers()
 
-		
+SKU = raw_input("Input SKU: ")
+
 partListOfStores = chunks(listOfStores, int(len(listOfStores)/THREADS))
-
-threading.Thread(target=updateDict).start()
-
-threads = [threading.Thread(target=searchSKU, args=(stores, sku)) for stores in partListOfStores]
+threads = [threading.Thread(target=searchSKU, args=(stores, SKU)) for stores in partListOfStores]
 for thread in threads:
-	thread.daemon = True
 	thread.start()
-
-while threading.active_count() > 0:
-	try:
-		print "Thread Running"
-		time.sleep(10)
-	except:
-		raise Exception("Ending threads...")
-TIMEOUT = 0
-print("Completed in {} Seconds".format(time.time() - STARTTIME))
+for thread in threads:
+	thread.join()
+PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price']) 
+print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}".format('${:,.2f}'.format(PRIMARYDICT[0]["Store"], int(PRIMARYDICT[0]["Price"]) * .01, abs(int(PRIMARYDICT[0]["Quantity"])))))
+saveToCSV(PRIMARYDICT)
+print("Saved Information to {}.csv".format(PRIMARYDICT[0]['SKU']))	
+print("Scan Completed in {} Seconds".format(time.time() - STARTTIME))
