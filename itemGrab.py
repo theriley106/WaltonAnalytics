@@ -70,6 +70,14 @@ def SearchStore(store, SKU):
 	return a
 
 def grabTerraFirma(store, SKU):
+	'''
+	curl 'https://www.walmart.com/terra-firma/fetch?rgs=OFFER_PRODUCT%2COFFER_INVENTORY%2COFFER_PRICE%2CVARIANT_SUMMARY' 
+	-H 'pragma: no-cache'  -H 'content-type: application/json' -H 'accept: */*' 
+	-H 'cache-control: no-cache' -H 'authority: www.walmart.com' 
+	-H 'referer: https://www.walmart.com/product/54594253/sellers' 
+	--data-binary '{"itemId":"4R6RCL3PBSIA","paginationContext":{"selected":false},
+	"storeFrontIds":[{"usStoreId":5751,"preferred":false,"semStore":false}]}' --compressed
+	'''
 	headers = {
 	    'pragma': 'no-cache',
 	    'content-type': 'application/json',
