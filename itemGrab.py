@@ -158,7 +158,7 @@ def saveToCSV(listVar, UPC):
 		wr.writerow(list1)
 		wr.writerow([""])
 		for listItem in listVar:
-			list1 = [listItem["Store"], '${:,.2f}'.format(int(listItem["Price"])), listItem["Quantity"]]
+			list1 = [listItem["Store"], '${:,.2f}'.format(int(listItem["Price"] * .01)), listItem["Quantity"]]
 			wr.writerow(list1)
 
 if __name__ == '__main__':
