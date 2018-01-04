@@ -5,8 +5,10 @@ import threading
 import json
 import csv
 import sys
+import bs4
 import time
 import subprocess
+import re
 lock = threading.Lock()
 STARTTIME = time.time()
 TIMEOUT = 10
@@ -34,6 +36,29 @@ def GrabElement(json, element):
 	if '}' in str(json):
 		json = json.replace('}', '')
 	return json
+
+def convertSKUToUPC(sku):
+	try:
+		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+		res = requests.get('https://brickseek.com/walmart-inventory-checker/?sku={}'.format(sku), headers=headers)
+		page = bs4.BeautifulSoup(res.text, 'lxml')
+		return str(page.select('.product-upc strong')[0].getText())
+	except:
+		print("Converting to UPC failed.")
+		return raw_input("Manually type item UPC: ")
+
+def searchStoreByUPC(store, UPC):
+	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+	try:
+		a = {}
+		res = requests.get("https://search.mobile.walmart.com/v1/products-by-code/UPC/{}?storeId={}".format(UPC, store), headers=headers).json()
+		a['Price'] = res['data']['inStore']['price']['priceInCents']
+		a['Quantity'] = res['data']['inStore']['inventory']['quantity']
+		a['Store'] = store
+		return a
+	except Exception as exp:
+		return None
+	
 
 def SearchStore(store, SKU):
 	a = {}
@@ -70,14 +95,6 @@ def SearchStore(store, SKU):
 	return a
 
 def grabTerraFirma(store, SKU):
-	'''
-	curl 'https://www.walmart.com/terra-firma/fetch?rgs=OFFER_PRODUCT%2COFFER_INVENTORY%2COFFER_PRICE%2CVARIANT_SUMMARY' 
-	-H 'pragma: no-cache'  -H 'content-type: application/json' -H 'accept: */*' 
-	-H 'cache-control: no-cache' -H 'authority: www.walmart.com' 
-	-H 'referer: https://www.walmart.com/product/54594253/sellers' 
-	--data-binary '{"itemId":"4R6RCL3PBSIA","paginationContext":{"selected":false},
-	"storeFrontIds":[{"usStoreId":5751,"preferred":false,"semStore":false}]}' --compressed
-	'''
 	headers = {
 	    'pragma': 'no-cache',
 	    'content-type': 'application/json',
@@ -117,25 +134,25 @@ def chunks(l, n):
 	for i in xrange(0, len(l), n):
 		yield l[i:i + n]
 
-def searchSKU(storeList, sku):
+def searchSKU(storeList, UPC):
 	for store in storeList:
 		if (time.time() - STARTTIME) < (60*TIMEOUT):
 			try:
 				suggestions_list = random.choice(listOfStores)
-				newData = grabTerraFirma(store, sku)
+				newData = searchStoreByUPC(store, UPC)
 				if newData != None:
 					newData["Price"]
 					lock.acquire()
 					print {"Store": store, "Price": newData["Price"], "Quantity": newData["Quantity"]}
-					PRIMARYDICT.append({"SKU": sku, "Store": store, "Price": int(newData["Price"]), "Quantity": newData["Quantity"]})
+					PRIMARYDICT.append({"UPC": UPC, "Store": store, "Price": int(newData["Price"]), "Quantity": newData["Quantity"]})
 					lock.release()
 			except Exception as exp:
 				pass
 		else:
 			return
 
-def saveToCSV(listVar):
-	with open("{}.csv".format(listVar[0]["SKU"]), "w") as fp:
+def saveToCSV(listVar, UPC):
+	with open("{}.csv".format(UPC), "w") as fp:
 		wr = csv.writer(fp, dialect='excel')
 		list1 = ["Store", "Price", "Quantity"]
 		wr.writerow(list1)
@@ -151,18 +168,19 @@ if __name__ == '__main__':
 	listOfStores = GrabAllStoreNumbers()
 
 	SKU = raw_input("Input SKU: ")
-
+	UPC = convertSKUToUPC(SKU)
 	partListOfStores = chunks(listOfStores, int(len(listOfStores)/THREADS))
-	threads = [threading.Thread(target=searchSKU, args=(stores, SKU)) for stores in partListOfStores]
+	threads = [threading.Thread(target=searchSKU, args=(stores, UPC)) for stores in partListOfStores]
 	for thread in threads:
 		thread.start()
 	for thread in threads:
 		thread.join()
 	if len(PRIMARYDICT) > 3:
 		PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price']) 
-		print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}\n\n\n".format(PRIMARYDICT[0]["Store"], '${:,.2f}'.format(int(PRIMARYDICT[0]["Price"])), abs(int(PRIMARYDICT[0]["Quantity"]))))
-		saveToCSV(PRIMARYDICT)
-		print("Saved Inventory Information to {}.csv\n".format(PRIMARYDICT[0]['SKU']))	
+		print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}\n\n\n".format(PRIMARYDICT[0]["Store"], '${:,.2f}'.format(int(PRIMARYDICT[0]["Price"] * .01)), abs(int(PRIMARYDICT[0]["Quantity"]))))
+		saveToCSV(PRIMARYDICT, SKU)
+		print("Saved Inventory Information to {}.csv\n".format(SKU))	
 		print("Scan Completed in {} Seconds".format(time.time() - STARTTIME))
+		print("UPC: {}".format(UPC))
 	else:
 		print("Item Stock Too Low")
