@@ -6,8 +6,14 @@ import time
 import random
 lock = threading.Lock()
 
-r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
-Proxies = r["proxies"]
+Proxies = [{}]
+if len(Proxies) < 5:
+	print("It is HIGHLY recommended that you use proxies with this program.")
+	print("It looks like you have not inputted any proxies into main.py")
+	raw_input("Click enter to continue without proxies: ")
+# This fixes that "Secret code" thing - it is HIGHLY recommended that you use proxies.
+# Actually this will probably not work properly without them - I would imagine
+# walmart has a ton of rate limitations set up
 
 def GrabElement(json, element):
 	json = json.partition(str(element) + '":')[2]
@@ -48,7 +54,7 @@ def SearchStore(store, SKU):
 	print res
 	try:
 		a["Price"] = int((GrabElement(str(res), 'priceInCents')))
-	except: 
+	except:
 		pass
 
 	a["Quantity"] = (GrabElement(str(res), 'quantity'))
@@ -158,4 +164,4 @@ if __name__ == "__main__":
 			for key, value in Information.items():
 				f.append(value)
 			writer.writerow(f)	'''
-	
+
