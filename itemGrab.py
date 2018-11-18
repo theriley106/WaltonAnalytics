@@ -42,7 +42,9 @@ def convertSKUToUPC(sku):
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 		res = requests.get('https://brickseek.com/walmart-inventory-checker/?sku={}'.format(sku), headers=headers)
 		page = bs4.BeautifulSoup(res.text, 'lxml')
-		return str(page.select('.product-upc strong')[0].getText())
+		upc = str(page).partition('upc=')[2].partition('"')[0]
+		print("Converted SKU: {} to UPC: {}".format(sku, upc))
+		return upc
 	except:
 		print("Converting to UPC failed.")
 		return raw_input("Manually type item UPC: ")
@@ -58,7 +60,7 @@ def searchStoreByUPC(store, UPC):
 		return a
 	except Exception as exp:
 		return None
-	
+
 
 def SearchStore(store, SKU):
 	a = {}
@@ -88,7 +90,7 @@ def SearchStore(store, SKU):
 	print res
 	try:
 		a["Price"] = int((GrabElement(str(res), 'priceInCents')))
-	except: 
+	except:
 		pass
 
 	a["Quantity"] = (GrabElement(str(res), 'quantity'))
@@ -176,10 +178,10 @@ if __name__ == '__main__':
 	for thread in threads:
 		thread.join()
 	if len(PRIMARYDICT) > 3:
-		PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price']) 
+		PRIMARYDICT = sorted(PRIMARYDICT, key=lambda k: k['Price'])
 		print("\n\n\nLowest:\nSTORE: {}\nPRICE: {}\nQUANTITY: {}\n\n\n".format(PRIMARYDICT[0]["Store"], '${:,.2f}'.format(int(PRIMARYDICT[0]["Price"] * .01)), abs(int(PRIMARYDICT[0]["Quantity"]))))
 		saveToCSV(PRIMARYDICT, SKU)
-		print("Saved Inventory Information to {}.csv\n".format(SKU))	
+		print("Saved Inventory Information to {}.csv\n".format(SKU))
 		print("Scan Completed in {} Seconds".format(time.time() - STARTTIME))
 		print("UPC: {}".format(UPC))
 	else:
