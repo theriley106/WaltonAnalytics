@@ -15,7 +15,7 @@ sys.setdefaultencoding('utf-8')
 Proxies = [{}]
 THREADS = 30
 LengthOfProxies = 30
-
+proxies = Proxies[0]
 def grabStoreFlyers(store):
 	url = 'https://api.flyertown.com/flyerkit/v2.0/publications/walmartusa?access_token=bec50cdf&locale=en-US&store_code={}'.format(store)
 	return url
@@ -499,7 +499,7 @@ def ReturnLowestPrice(sku, accounttype='Limitedd'):
 				Lis.append(a)
 				print('-')
 			except Exception as exp:
-				print(exp)
+				#print(exp)
 				pass
 	if accounttype != "Limited":
 		listname = GrabAllStoreNumbers()
@@ -545,35 +545,38 @@ def wmGrabData(store, searchterm, offset, storeDict=None, threadCount=10):
 			if storeDict == None:
 				return res.json()["result"]['results']
 			else:
-				for e in res.json()["result"]['results']:
-					try:
-						rating = e['ratings']['rating']
-						e['ratings'] = rating
-						inventoryStatus = e['inventory']['status']
-						inventoryQuantity = e['inventory']['quantity']
-						e['quantity'] = inventoryQuantity
-						e['inStock'] = inventoryStatus
-						del e['inventory']
+				try:
+					for e in res.json()["result"]['results']:
 						try:
-							price = float(e['price']['priceInCents']) * .01
-							e['price'] = price
+							rating = e['ratings']['rating']
+							e['ratings'] = rating
+							inventoryStatus = e['inventory']['status']
+							inventoryQuantity = e['inventory']['quantity']
+							e['quantity'] = inventoryQuantity
+							e['inStock'] = inventoryStatus
+							del e['inventory']
+							try:
+								price = float(e['price']['priceInCents']) * .01
+								e['price'] = price
+							except:
+								e['price'] = "UNAVAILABLE"
+							review = e['reviews']['reviewCount']
+							e['reviews'] = review
+							image = e['images']['largeUrl']
+							e['images'] = image
+							del e['location']
+							dept = e['department']['name']
+							e['department'] = dept
+							e['www'] = e['productId']['WWWItemId']
+							e['upc'] = e['productId']['upc']
+							e['pID'] = e['productId']['productId']
+							del e['productId']
+							if e['upc'] not in str(storeDict[store]['results']):
+								storeDict[store]['results'].append(e)
 						except:
-							e['price'] = "UNAVAILABLE"
-						review = e['reviews']['reviewCount']
-						e['reviews'] = review
-						image = e['images']['largeUrl']
-						e['images'] = image
-						del e['location']
-						dept = e['department']['name']
-						e['department'] = dept
-						e['www'] = e['productId']['WWWItemId']
-						e['upc'] = e['productId']['upc']
-						e['pID'] = e['productId']['productId']
-						del e['productId']
-						if e['upc'] not in str(storeDict[store]['results']):
-							storeDict[store]['results'].append(e)
-					except:
-						pass
+							pass
+				except:
+					pass
 	threads = [threading.Thread(target=genData, args=(store, searchterm, listPage, storeDict)) for listPage in chunks(totalPages, len(totalPages)/threadCount)]
 	for thread in threads: thread.start()
 	for thread in threads: thread.join()
@@ -589,7 +592,8 @@ def printInventory(store, results):
 		try:
 			print len(results[store]['results'])
 		except Exception as exp:
-			print exp
+			pass
+			#print exp
 
 def saveInventory(store, my_dict):
 	while True:
@@ -627,7 +631,8 @@ class storeAnalytics(object):
 if __name__ == "__main__":
 	#ReturnLowestPrice("106607294")
 	#ReturnStoreInfo('5871')
-	a = storeAnalytics('3563')
+	storeNum = raw_input("Store Number: ")
+	a = storeAnalytics(storeNum)
 	'''for e in wmGrabData("2265", "1", 0):
 		print e["name"]'''
 	a.searchStore()
