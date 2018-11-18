@@ -11,9 +11,10 @@ import sys
 import Networking
 reload(sys)
 sys.setdefaultencoding('utf-8')
-r = requests.post("http://138.197.123.15:8888/proxies/{}".format(open('./SecretCode.txt').read().strip())).json()
-Proxies = r["proxies"]
-LengthOfProxies = len(Proxies)
+
+Proxies = [{}]
+THREADS = 30
+LengthOfProxies = 30
 
 def grabStoreFlyers(store):
 	url = 'https://api.flyertown.com/flyerkit/v2.0/publications/walmartusa?access_token=bec50cdf&locale=en-US&store_code={}'.format(store)
@@ -434,7 +435,7 @@ def SearchStore(store, SKU):
 	res = res.json()
 	try:
 		a["Price"] = int((GrabElement(str(res), 'priceInCents'))) * .01
-	except: 
+	except:
 		pass
 
 	a["Quantity"] = (GrabElement(str(res), 'quantity'))
@@ -632,4 +633,4 @@ if __name__ == "__main__":
 	a.searchStore()
 	#print('opened')
 
-	
+
