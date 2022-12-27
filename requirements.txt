@@ -1,6 +1,6 @@
 Flask==0.10.1
 grey_harvest==0.1.5
-setuptools==20.7.0
+setuptools==65.5.1
 requests==2.12.3
 beautifulsoup4==4.6.0
 flatten_json==0.1.6
